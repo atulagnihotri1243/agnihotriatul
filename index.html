@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atul Agnihotri — Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Poppins:wght@300;400;500;600&family=Lora:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ivory:#FAF6F0; --paper:#F3EEE4; --navy:#1d4072; --navy-soft:#3C4654;
+  --sage-deep:#5F7163; --rosegold:#C7A582; --line:rgba(34,42,53,0.12);
+  --text:#030303; --text-soft:#6B675F;
+  --font-display:'Cormorant Garamond',serif; --font-body:'Jost',sans-serif;
+}
+*{box-sizing:border-box;} html{scroll-behavior:smooth;}
+body{margin:0;background:var(--ivory);color:var(--text);font-family:var(--font-body);font-weight:300;line-height:1.7;overflow-x:hidden;}
+::selection{background:var(--rosegold);color:var(--ivory);}
+h1,h2,h3{font-family:var(--font-display);font-weight:500;margin:0;color:var(--navy);}
+.eyebrow{font-family:var(--font-body);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--sage-deep);}
+
+/* EDIT MODE INDICATORS */
+body.edit-mode [data-ed]{outline:1px dashed rgba(201,165,130,0.4);cursor:text;}
+body.edit-mode [data-ed]:hover{background:rgba(199,165,130,0.12);outline-color:var(--rosegold);}
+body.edit-mode [data-ed]:focus{background:rgba(199,165,130,0.2);outline:2px solid var(--rosegold);box-shadow:none;}
+body.edit-mode [data-ed]:empty:before{content:attr(data-placeholder);color:var(--text-soft);opacity:.5;pointer-events:none;}
+[data-ed]{outline:none;border-radius:3px;transition:background .2s;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(12px);
+  background:var(--navy);color:var(--ivory);font-size:12px;letter-spacing:.04em;
+  padding:10px 22px;border-radius:30px;opacity:0;transition:all .3s;z-index:2001;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* EDIT MODE TOOLBAR */
+.edit-bar{
+  position:fixed;top:0;left:0;right:0;z-index:1500;
+  background:var(--navy);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  padding:10px 20px;font-family:var(--font-body);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  transform:translateY(-100%);transition:transform .3s ease;
+}
+body.edit-mode .edit-bar{transform:translateY(0);}
+.edit-bar .notice{opacity:.7;}
+.edit-bar .bar-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.eb-btn{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.3);background:transparent;color:#fff;cursor:pointer;white-space:nowrap;}
+.eb-btn:hover{background:rgba(255,255,255,0.15);}
+.eb-btn.primary{background:var(--rosegold);border-color:var(--rosegold);color:var(--navy);font-weight:500;}
+.eb-btn.primary:hover{background:#d4b48a;}
+.eb-btn.danger{border-color:rgba(220,100,80,0.5);color:#e87a6b;}
+.eb-btn.danger:hover{background:rgba(220,100,80,0.15);}
+
+/* EDIT ONLY controls – hidden by default */
+.edit-only{display:none;}
+body.edit-mode .edit-only{display:block;}
+.edit-only.flex{display:none;}
+body.edit-mode .edit-only.flex{display:flex;}
+.edit-only.inline{display:none;}
+body.edit-mode .edit-only.inline{display:inline-block;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;
+  padding:22px 48px;mix-blend-mode:difference;}
+body.edit-mode nav{top:44px;}
+nav .logo{font-family:var(--font-display);font-size:19px;color:#fff;letter-spacing:.04em;cursor:default;}
+nav .dot{color:var(--rosegold);}
+nav .logo.sm{font-size:11px;letter-spacing:.2em;font-family:var(--font-body);}
+@media(max-width:640px){nav{padding:18px 22px;}}
+
+/* VEIL */
+.veil{position:fixed;inset:0;background:var(--ivory);z-index:1000;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:10px;transition:opacity .9s ease,visibility .9s;}
+.veil.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.veil .mono{font-family:var(--font-display);font-size:14px;letter-spacing:.5em;text-transform:uppercase;color:var(--sage-deep);
+  opacity:0;animation:fadeUp 1s ease .2s forwards;}
+.veil .star{font-size:46px;color:var(--rosegold);opacity:0;animation:fadeUp 1.1s ease .5s forwards;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;
+  background:linear-gradient(180deg,rgba(34,42,53,.08),rgba(34,42,53,.6)),var(--navy);overflow:hidden;}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.92;cursor:grab;
+  will-change:transform;user-select:none;}
+.hero-bg.dragging{cursor:grabbing;}
+.hero-upload-zone{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;cursor:pointer;}
+.hero-upload-btn{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#fff;
+  border:1px solid rgba(255,255,255,.5);padding:13px 24px;border-radius:30px;
+  background:rgba(0,0,0,.2);backdrop-filter:blur(2px);}
+.hero-adjust-bar{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);z-index:4;
+  display:flex;gap:6px;background:rgba(34,42,53,.7);backdrop-filter:blur(4px);border-radius:30px;padding:6px 8px;}
+.hero-adjust-bar button{width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,.15);
+  color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.hero-adjust-bar button:hover{background:rgba(255,255,255,.3);}
+.hero-content{position:relative;z-index:3;padding:0 48px 70px;color:#fff;width:100%;
+  opacity:0;transform:translateY(24px);animation:fadeUp 1s ease 1.1s forwards;}
+@media(max-width:640px){.hero-content{padding:0 22px 50px;}}
+.hero-content .eyebrow{color:var(--rosegold);margin-bottom:10px;}
+.hero-content h1{font-size:clamp(46px,8vw,84px);line-height:1;color:#fff;}
+.hero-content .role{margin-top:14px;font-size:16px;letter-spacing:.06em;color:rgba(255,255,255,.85);}
+.scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;
+  color:#fff;font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.7;
+  display:flex;flex-direction:column;align-items:center;gap:8px;}
+.scroll-hint .sl{width:1px;height:34px;background:rgba(255,255,255,.6);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scaleY(.4);opacity:.4;}50%{transform:scaleY(1);opacity:1;}}
+
+/* MAIN */
+main{max-width:980px;margin:0 auto;padding:0 48px;}
+@media(max-width:640px){main{padding:0 22px;}}
+section.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease;}
+section.reveal.in{opacity:1;transform:translateY(0);}
+
+/* INTRO */
+.intro-block{padding:120px 0 90px;text-align:center;max-width:700px;margin:0 auto;}
+.intro-block h2{font-size:clamp(26px,4vw,36px);font-style:italic;line-height:1.45;}
+.intro-block p{margin-top:22px;font-size:16px;color:var(--text-soft);}
+
+/* VITALS */
+.vitals{display:flex;justify-content:center;flex-wrap:wrap;padding:50px 0 100px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.vital{flex:1;min-width:140px;text-align:center;padding:0 20px;border-right:1px solid var(--line);}
+.vital:last-child{border-right:none;}
+@media(max-width:640px){.vital{min-width:45%;border-right:none;padding:14px 10px;}}
+.vital .num{font-family:var(--font-display);font-size:34px;color:var(--navy);}
+.vital .label{margin-top:6px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-soft);}
+
+/* INFO TABLES */
+.info-section{padding:90px 0;}
+.info-head{text-align:center;margin-bottom:46px;}
+.info-head h2{font-size:32px;margin-top:8px;}
+.info-table{border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+.info-row{display:grid;grid-template-columns:200px 1fr auto;border-bottom:1px solid var(--line);position:relative;}
+.info-row:last-child{border-bottom:none;}
+.info-row:nth-child(even){background:var(--paper);}
+.info-row .k{padding:14px 18px;font-size:13px;letter-spacing:.03em;color:var(--navy);font-weight:500;
+  border-right:1px solid var(--line);display:flex;align-items:center;}
+.info-row .v{padding:14px 18px;font-size:14.5px;color:var(--text-soft);display:flex;align-items:center;}
+.row-ctrls{display:none;align-items:center;gap:2px;padding:0 6px;}
+body.edit-mode .row-ctrls{display:flex;}
+.row-ctrls button{width:20px;height:20px;border:none;background:none;color:var(--text-soft);
+  font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-radius:3px;}
+.row-ctrls button:hover{background:rgba(199,165,130,.2);color:var(--rosegold);}
+.row-ctrls .rdel:hover{color:#c05; background:rgba(192,0,80,.1);}
+@media(max-width:600px){.info-row{grid-template-columns:130px 1fr auto;}
+  .info-row .k{font-size:11.5px;padding:12px 10px;}.info-row .v{font-size:13px;padding:12px 10px;}}
+.add-row-btn{display:block;margin:18px auto 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--sage-deep);background:none;border:1px solid var(--line);padding:8px 18px;border-radius:30px;cursor:pointer;}
+.add-row-btn:hover{border-color:var(--rosegold);color:var(--rosegold);}
+.about-family{margin-top:30px;font-size:15px;color:var(--text-soft);max-width:680px;
+  margin-left:auto;margin-right:auto;text-align:center;}
+
+/* STORY */
+.story{display:grid;grid-template-columns:1fr 1.1fr;gap:60px;padding:100px 0;align-items:center;}
+@media(max-width:780px){.story{grid-template-columns:1fr;gap:32px;}}
+.story-photo{aspect-ratio:4/5;border-radius:2px;overflow:hidden;background:var(--paper);
+  position:relative;display:flex;align-items:center;justify-content:center;}
+.story-photo img{width:100%;height:100%;object-fit:cover;cursor:grab;will-change:transform;user-select:none;}
+.story-photo img.dragging{cursor:grabbing;}
+.photo-upload-hint{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);text-align:center;padding:0 20px;}
+.photo-adjust-bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+  display:none;gap:4px;background:rgba(34,42,53,.65);backdrop-filter:blur(3px);border-radius:30px;padding:5px 6px;}
+body.edit-mode .photo-adjust-bar{display:flex;}
+.photo-adjust-bar button{width:22px;height:22px;border-radius:50%;border:none;background:rgba(255,255,255,.15);
+  color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.photo-adjust-bar button:hover{background:rgba(255,255,255,.3);}
+.story-text h2{font-size:28px;margin-bottom:14px;}
+.story-text p{font-size:15.5px;color:var(--text-soft);}
+
+/* TIMELINE */
+.timeline{padding:90px 0;}
+.timeline-head{margin-bottom:50px;text-align:center;}
+.timeline-head h2{font-size:32px;margin-top:8px;}
+.tl-entry{display:grid;grid-template-columns:160px 1fr;gap:30px;padding:28px 0;
+  border-bottom:1px solid var(--line);position:relative;}
+.tl-entry:last-child{border-bottom:none;}
+@media(max-width:640px){.tl-entry{grid-template-columns:1fr;gap:6px;}}
+.tl-entry .period{font-family:var(--font-display);font-style:italic;font-size:17px;color:var(--sage-deep);padding-top:2px;}
+.tl-entry .title{font-family:var(--font-display);font-size:21px;color:var(--navy);}
+.tl-entry .org{font-size:13px;letter-spacing:.04em;color:var(--rosegold);margin-top:3px;text-transform:uppercase;}
+.tl-entry .desc{margin-top:8px;font-size:14.5px;color:var(--text-soft);}
+.tl-del{position:absolute;right:0;top:24px;font-size:11px;color:var(--text-soft);
+  display:none;cursor:pointer;border:none;background:none;padding:2px 5px;border-radius:3px;}
+body.edit-mode .tl-del{display:block;}
+.tl-del:hover{color:#c05;}
+.add-entry-btn{display:none;margin:28px auto 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--sage-deep);background:none;border:1px solid var(--line);padding:8px 18px;border-radius:30px;cursor:pointer;}
+body.edit-mode .add-entry-btn{display:block;}
+.add-entry-btn:hover{border-color:var(--rosegold);color:var(--rosegold);}
+
+/* INTERESTS */
+.interests{padding:90px 0;text-align:center;}
+.interests h2{font-size:32px;margin-bottom:40px;}
+.chip-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
+.chip{font-size:13px;letter-spacing:.04em;padding:10px 20px;border:1px solid var(--line);
+  border-radius:30px;color:var(--navy-soft);position:relative;font-family:var(--font-body);}
+.chip .cdel{position:absolute;top:-7px;right:-7px;width:17px;height:17px;background:var(--ivory);
+  border:1px solid var(--line);border-radius:50%;font-size:9px;display:none;align-items:center;
+  justify-content:center;cursor:pointer;color:var(--text-soft);}
+body.edit-mode .chip .cdel{display:flex;}
+.chip .cdel:hover{color:#c05;}
+.add-chip-btn{font-size:13px;padding:10px 20px;border:1px dashed var(--rosegold);border-radius:30px;
+  color:var(--rosegold);background:none;cursor:pointer;display:none;}
+body.edit-mode .add-chip-btn{display:inline-block;}
+
+/* GALLERY */
+.gallery{padding:90px 0;}
+.gallery h2{font-size:32px;text-align:center;margin-bottom:10px;}
+.gallery .sub{text-align:center;font-size:13.5px;color:var(--text-soft);margin-bottom:46px;}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:640px){.gallery-grid{grid-template-columns:repeat(2,1fr);}}
+.g-tile{aspect-ratio:1/1.15;background:var(--paper);border-radius:2px;overflow:hidden;
+  position:relative;transition:transform .3s ease;}
+.g-tile:hover{transform:translateY(-4px);}
+.g-tile img{width:100%;height:100%;object-fit:cover;cursor:grab;will-change:transform;user-select:none;}
+.g-tile img.dragging{cursor:grabbing;}
+.g-tile .empty-hint{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;
+  justify-content:center;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);}
+body.edit-mode .g-tile .empty-hint{display:flex;}
+.g-tile .gdel{position:absolute;top:8px;right:8px;width:22px;height:22px;background:rgba(34,42,53,.6);
+  color:#fff;border-radius:50%;display:none;align-items:center;justify-content:center;
+  font-size:11px;cursor:pointer;border:none;}
+body.edit-mode .g-tile .gdel{display:flex;}
+.g-tile .gdel:hover{background:rgba(192,0,80,.8);}
+.add-photo-btn{display:none;margin:0 auto;width:100%;aspect-ratio:1/1.15;background:var(--paper);
+  border:2px dashed var(--line);border-radius:2px;cursor:pointer;
+  flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);}
+body.edit-mode .add-photo-btn{display:flex;}
+.add-photo-btn:hover{border-color:var(--rosegold);color:var(--rosegold);}
+
+/* CONTACT */
+.contact{padding:110px 0 130px;text-align:center;}
+.contact .eyebrow{margin-bottom:14px;}
+.contact h2{font-size:clamp(28px,5vw,42px);font-style:italic;}
+.contact-grid{margin-top:42px;display:flex;justify-content:center;gap:50px;flex-wrap:wrap;}
+.c-item .l{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-soft);margin-bottom:6px;}
+.c-item .v{font-family:var(--font-display);font-size:19px;color:var(--navy);}
+.social-links{display:flex;justify-content:center;gap:50px;flex-wrap:wrap;margin-top:48px;padding-top:40px;border-top:1px solid var(--line);}
+.s-link{text-align:center;}
+.s-link .l{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px;}
+.s-link a{font-family:var(--font-display);font-size:18px;color:var(--rosegold);font-style:italic;
+  text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;display:block;}
+.s-link a:hover{border-color:var(--rosegold);}
+.s-edit-btn{display:none;margin-top:6px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-soft);border:none;background:none;cursor:pointer;padding:3px 8px;border-radius:20px;}
+body.edit-mode .s-edit-btn{display:inline-block;}
+.s-edit-btn:hover{color:var(--rosegold);}
+
+footer{border-top:1px solid var(--line);padding:30px 48px;text-align:center;font-size:11px;color:var(--text-soft);letter-spacing:.04em;}
+
+/* PHOTO ADJUST BAR (hero) */
+.hero-adjust-bar{display:none;}
+body.edit-mode .hero-adjust-bar{display:flex;}
+
+input[type=file]{display:none;}
+@media print{nav,.veil,.edit-bar,.toast,.edit-only,.add-row-btn,.add-entry-btn,
+  .add-chip-btn,.add-photo-btn,.row-ctrls,.tl-del,.chip .cdel,.g-tile .gdel,.gdel,.s-edit-btn,
+  .hero-adjust-bar,.photo-adjust-bar,.scroll-hint{display:none!important;}}
+
+/* CUSTOMIZE mini panel */
+.cp-toggle{position:fixed;left:24px;bottom:24px;z-index:1200;width:44px;height:44px;border-radius:50%;
+  background:var(--navy);color:#fff;border:none;font-size:17px;cursor:pointer;
+  box-shadow:0 4px 14px rgba(34,42,53,.3);display:none;}
+body.edit-mode .cp-toggle{display:flex;align-items:center;justify-content:center;}
+.cp-panel{position:fixed;left:24px;bottom:78px;z-index:1201;background:var(--ivory);border:1px solid var(--line);
+  border-radius:12px;padding:16px;width:240px;box-shadow:0 8px 28px rgba(34,42,53,.18);
+  opacity:0;visibility:hidden;transform:translateY(8px);transition:all .2s ease;}
+.cp-panel.open{opacity:1;visibility:visible;transform:translateY(0);}
+.cp-title{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-soft);margin-bottom:12px;}
+.cp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cp-row label{font-size:12px;color:var(--navy);}
+.cp-row input[type=color]{width:28px;height:24px;border:1px solid var(--line);border-radius:5px;padding:0;cursor:pointer;}
+.fs-ctrl{display:flex;gap:6px;}
+.fs-ctrl button{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);
+  background:none;cursor:pointer;font-size:12px;color:var(--navy);}
+.fs-ctrl button:hover{border-color:var(--rosegold);color:var(--rosegold);}
+.cp-row select{width:100%;font-size:11.5px;padding:5px 8px;border-radius:6px;
+  border:1px solid var(--line);background:var(--ivory);color:var(--navy);}
+.cp-reset{width:100%;margin-top:4px;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--text-soft);background:none;border:1px solid var(--line);border-radius:20px;padding:6px;cursor:pointer;}
+.cp-reset:hover{color:var(--rosegold);border-color:var(--rosegold);}
+</style>
+</head>
+<body>
+
+<!-- Intro veil -->
+<div class="veil" id="veil">
+  <div class="mono">Atul Agnihotri</div>
+  <div class="star">✦</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- EDIT MODE TOOLBAR (only visible in edit mode) -->
+<div class="edit-bar" id="editBar">
+  <span class="notice">✎ Edit Mode — click any text to edit</span>
+  <div class="bar-actions">
+    <button class="eb-btn" onclick="openCustomize()">🎨 Style</button>
+    <button class="eb-btn" onclick="saveToFile()" style="background:var(--rosegold);border-color:var(--rosegold);color:#1d4072;font-weight:500;">⬇ Save to File</button>
+    <button class="eb-btn danger" onclick="exitEditMode()">✕ Exit Edit Mode</button>
+  </div>
+</div>
+
+<nav>
+  <div class="logo" id="logoHit" title="Click 5× to enter edit mode">A<span class="dot">.</span>A<span class="dot">.</span></div>
+  <div class="logo sm" data-ed data-placeholder="Subtitle">Personal Profile</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="heroSection">
+  <img class="hero-bg" id="heroBg" src="" alt="" style="display:none;">
+  <div class="hero-upload-zone edit-only flex" id="heroZone" style="cursor:pointer;" onclick="document.getElementById('heroFileIn').click()">
+    <div class="hero-upload-btn">Click to upload main photo</div>
+  </div>
+  <input type="file" id="heroFileIn" accept="image/*">
+  <div class="hero-adjust-bar" id="heroAdjBar">
+    <button onclick="adjImg('heroBg','zoomin')">+</button>
+    <button onclick="adjImg('heroBg','zoomout')">−</button>
+    <button onclick="adjImg('heroBg','left')">←</button>
+    <button onclick="adjImg('heroBg','right')">→</button>
+    <button onclick="adjImg('heroBg','up')">↑</button>
+    <button onclick="adjImg('heroBg','down')">↓</button>
+    <button onclick="adjImg('heroBg','reset')">⟲</button>
+  </div>
+  <div class="hero-content">
+    <div class="eyebrow" data-ed data-placeholder="Eyebrow">A Little About Me</div>
+    <h1 data-ed data-placeholder="Your Name">Atul Agnihotri</h1>
+    <div class="role" data-ed data-placeholder="Role / Location">Server &amp; DevOps Engineer · Chandigarh, India</div>
+  </div>
+  <div class="scroll-hint"><span>Scroll</span><div class="sl"></div></div>
+</section>
+
+<main>
+  <!-- INTRO -->
+  <section class="reveal intro-block" id="introBlock">
+    <h2 data-ed data-placeholder="Opening line">I believe in building a steady, honest life — one rooted in hard work, quiet ambition, and the people I love.</h2>
+    <p data-ed data-placeholder="Short intro paragraph">I'm someone who finds satisfaction in solving problems calmly and keeping things running smoothly — at work and at home. I value honesty, simplicity, and good conversation, and I'm looking forward to building a life together with someone who feels like home.</p>
+  </section>
+
+  <!-- VITALS -->
+  <section class="reveal vitals" id="vitalsBlock">
+    <div class="vital"><div class="num" data-ed>27</div><div class="label" data-ed>Age</div></div>
+    <div class="vital"><div class="num" data-ed>5'6"</div><div class="label" data-ed>Height</div></div>
+    <div class="vital"><div class="num" data-ed>65 kg</div><div class="label" data-ed>Weight</div></div>
+    <div class="vital"><div class="num" data-ed>Hindu</div><div class="label" data-ed>Religion</div></div>
+    <div class="vital"><div class="num" data-ed>Chandigarh</div><div class="label" data-ed>Based In</div></div>
+  </section>
+
+  <!-- BIODATA TABLE -->
+  <section class="reveal info-section" id="biodataBlock">
+    <div class="info-head">
+      <div class="eyebrow" data-ed>In Detail</div>
+      <h2 data-ed>Biodata</h2>
+    </div>
+    <div class="info-table" id="biodataTable">
+      <div class="info-row"><div class="k" data-ed>Date of Birth</div><div class="v" data-ed>08 Jan 1999</div><div class="row-ctrls"><button onclick="moveRow(this,-1)" title="Up">▲</button><button onclick="moveRow(this,1)" title="Down">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()" title="Delete">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Time of Birth</div><div class="v" data-ed>01:14 PM</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Place of Birth</div><div class="v" data-ed>Pansai</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Manglik</div><div class="v" data-ed>No</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Religion</div><div class="v" data-ed>Hindu</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Caste</div><div class="v" data-ed>Brahman</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Gotra</div><div class="v" data-ed>Kundaiya</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Height</div><div class="v" data-ed>5 ft 5 in</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Weight</div><div class="v" data-ed>65 kg</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Blood Group</div><div class="v" data-ed>B+</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Education</div><div class="v" data-ed>M.C.A from H.P.T.U, Hamirpur</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Profession</div><div class="v" data-ed>Server Administrator, Mohali (IT Company)</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+    </div>
+    <button class="add-row-btn edit-only" onclick="addRow('biodataTable')">+ Add row</button>
+  </section>
+
+  <!-- FAMILY TABLE -->
+  <section class="reveal info-section" id="familyBlock">
+    <div class="info-head">
+      <div class="eyebrow" data-ed>Roots</div>
+      <h2 data-ed>Family Details</h2>
+    </div>
+    <div class="info-table" id="familyTable">
+      <div class="info-row"><div class="k" data-ed>Father Name</div><div class="v" data-ed>Rajender Kumar</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Father's Occupation</div><div class="v" data-ed>Driver at Agriculture Department, Palampur</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Mother Name</div><div class="v" data-ed>Sudesh Kumari</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Mother's Occupation</div><div class="v" data-ed>Housewife</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+      <div class="info-row"><div class="k" data-ed>Siblings</div><div class="v" data-ed>1 younger sister</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div></div>
+    </div>
+    <button class="add-row-btn edit-only" onclick="addRow('familyTable')">+ Add row</button>
+    <p class="about-family" data-ed data-placeholder="A few lines about your family...">We're a close-knit, simple family from Himachal Pradesh. My father has worked as a driver with the Agriculture Department for years, and my mother has held our home together as a homemaker. I have one younger sister. We believe in honesty, respect for elders, and standing by each other — values I hope to carry into my own family one day.</p>
+  </section>
+
+  <!-- STORY -->
+  <section class="reveal story" id="storyBlock">
+    <div class="story-photo" id="storyPhoto">
+      <div class="photo-upload-hint edit-only" style="cursor:pointer;" onclick="document.getElementById('storyFileIn').click()">Click to add photo</div>
+      <input type="file" id="storyFileIn" accept="image/*">
+      <div class="photo-adjust-bar" id="storyAdjBar">
+        <button onclick="adjImg('storyImg','zoomin')">+</button>
+        <button onclick="adjImg('storyImg','zoomout')">−</button>
+        <button onclick="adjImg('storyImg','reset')">⟲</button>
+      </div>
+    </div>
+    <div class="story-text">
+      <div class="eyebrow" data-ed>My Story</div>
+      <h2 style="margin-top:10px;" data-ed data-placeholder="Headline">Rooted in the hills, building a career in the cloud</h2>
+      <p data-ed data-placeholder="Your story paragraph">I grew up in Himachal Pradesh and completed my MCA from Himachal Pradesh Technical University in 2022, after a BCA from Himachal Pradesh University. Over the last few years I've built a career in server administration and DevOps — work that's taught me patience, precision, and the value of staying calm under pressure. Outside of work, I'm someone who enjoys the simple things: good food, quiet evenings, and time with family.</p>
+    </div>
+  </section>
+
+  <!-- CAREER -->
+  <section class="reveal timeline" id="careerBlock">
+    <div class="timeline-head">
+      <div class="eyebrow" data-ed>Work</div>
+      <h2 data-ed>Career</h2>
+    </div>
+    <div id="careerList">
+      <div class="tl-entry">
+        <div class="period" data-ed>June 2025 — Present</div>
+        <div>
+          <div class="title" data-ed>Server Administrator / DevOps Engineer</div>
+          <div class="org" data-ed>Nexever Technologies</div>
+          <div class="desc" data-ed>Managing Linux and Windows servers, data center operations, and 50+ hardware and cloud servers across providers.</div>
+        </div>
+        <button class="tl-del" onclick="this.closest('.tl-entry').remove()">✕ Remove</button>
+      </div>
+      <div class="tl-entry">
+        <div class="period" data-ed>May 2023 — June 2025</div>
+        <div>
+          <div class="title" data-ed>Linux Administrator / DevOps Engineer</div>
+          <div class="org" data-ed>ToXSL Technologies</div>
+          <div class="desc" data-ed>Managed production environments, configured Apache/Nginx, implemented monitoring with Nagios, and handled Docker-based deployments.</div>
+        </div>
+        <button class="tl-del" onclick="this.closest('.tl-entry').remove()">✕ Remove</button>
+      </div>
+    </div>
+    <button class="add-entry-btn" onclick="addTLEntry('careerList')">+ Add experience</button>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="reveal timeline" id="eduBlock">
+    <div class="timeline-head">
+      <div class="eyebrow" data-ed>Learning</div>
+      <h2 data-ed>Education</h2>
+    </div>
+    <div id="eduList">
+      <div class="tl-entry">
+        <div class="period" data-ed>2022</div>
+        <div>
+          <div class="title" data-ed>MCA</div>
+          <div class="org" data-ed>Himachal Pradesh Technical University</div>
+          <div class="desc" data-ed></div>
+        </div>
+        <button class="tl-del" onclick="this.closest('.tl-entry').remove()">✕ Remove</button>
+      </div>
+      <div class="tl-entry">
+        <div class="period" data-ed>2020</div>
+        <div>
+          <div class="title" data-ed>BCA</div>
+          <div class="org" data-ed>Himachal Pradesh University</div>
+          <div class="desc" data-ed></div>
+        </div>
+        <button class="tl-del" onclick="this.closest('.tl-entry').remove()">✕ Remove</button>
+      </div>
+      <div class="tl-entry">
+        <div class="period" data-ed>2010 — 2017</div>
+        <div>
+          <div class="title" data-ed>Schooling, 6th to 12th</div>
+          <div class="org" data-ed>Jawahar Navodaya Vidyalaya, Dungrin, Hamirpur</div>
+          <div class="desc" data-ed>Best and life-changing experience — unforgettable memories and friendships.</div>
+        </div>
+        <button class="tl-del" onclick="this.closest('.tl-entry').remove()">✕ Remove</button>
+      </div>
+    </div>
+    <button class="add-entry-btn" onclick="addTLEntry('eduList')">+ Add education</button>
+  </section>
+
+  <!-- INTERESTS -->
+  <section class="reveal interests" id="interestsBlock">
+    <div class="eyebrow" data-ed>Beyond Work</div>
+    <h2 style="margin-top:10px;" data-ed>Interests &amp; Hobbies</h2>
+    <div class="chip-row" id="chipRow">
+      <span class="chip">Trekking<span class="cdel" onclick="this.parentElement.remove()">✕</span></span>
+      <span class="chip">Traveling<span class="cdel" onclick="this.parentElement.remove()">✕</span></span>
+      <span class="chip">Cricket<span class="cdel" onclick="this.parentElement.remove()">✕</span></span>
+      <span class="chip">Technology<span class="cdel" onclick="this.parentElement.remove()">✕</span></span>
+      <span class="chip">Music<span class="cdel" onclick="this.parentElement.remove()">✕</span></span>
+      <span class="chip">Family time<span class="cdel" onclick="this.parentElement.remove()">✕</span></span>
+    </div>
+    <button class="add-chip-btn" onclick="addChip()" style="margin-top:14px;">+ Add interest</button>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="reveal gallery" id="galleryBlock">
+    <div class="eyebrow" style="text-align:center;display:block;" data-ed>Gallery</div>
+    <h2 data-ed>In Pictures</h2>
+    <div class="sub" data-ed>A few moments from my life</div>
+    <div class="gallery-grid" id="galleryGrid">
+      <!-- tiles injected by JS -->
+    </div>
+    <button class="add-photo-btn edit-only" id="addPhotoBtn" style="margin-top:14px;max-width:220px;border-radius:6px;" onclick="addGallerySlot()">+ Add photo</button>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="reveal contact" id="contactBlock">
+    <div class="eyebrow" data-ed>Let's Connect</div>
+    <h2 data-ed>I'd love to hear from you.</h2>
+    <div class="contact-grid">
+      <div class="c-item"><span class="l">Phone</span><span class="v" data-ed>+91 70186 51532</span></div>
+      <div class="c-item"><span class="l">Email</span><span class="v" data-ed>atul.agnihotri.1243@gmail.com</span></div>
+      <div class="c-item"><span class="l">Location</span><span class="v" data-ed>Chandigarh, India</span></div>
+      <div class="c-item"><span class="l">Address</span><span class="v" data-ed>VPO Pansai, Teh. Nadaun, District Hamirpur</span></div>
+    </div>
+    <div class="social-links">
+      <div class="s-link">
+        <span class="l">LinkedIn</span>
+        <a id="liLink" href="https://www.linkedin.com/in/atul-agnihotri-a6483517a" target="_blank" rel="noopener">linkedin.com/in/atul-agnihotri</a>
+        <button class="s-edit-btn" onclick="editLink('liLink','LinkedIn URL')">✎ Edit link</button>
+      </div>
+      <div class="s-link">
+        <span class="l">Instagram</span>
+        <a id="igLink" href="https://www.instagram.com/atul.agnihotri.1243" target="_blank" rel="noopener">instagram.com/atul.agnihotri.1243</a>
+        <button class="s-edit-btn" onclick="editLink('igLink','Instagram URL')">✎ Edit link</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-ed>© Atul Agnihotri</footer>
+
+<!-- CUSTOMIZE PANEL -->
+<button class="cp-toggle" id="cpToggle">✎</button>
+<div class="cp-panel" id="cpPanel">
+  <div class="cp-title">Appearance</div>
+  <div class="cp-row"><label>Font size</label><div class="fs-ctrl"><button onclick="changeFS(-0.05)">−</button><button onclick="changeFS(0.05)">+</button></div></div>
+  <div class="cp-row"><label>Text color</label><input type="color" id="cpText" value="#030303" oninput="setCSSVar('--text',this.value)"></div>
+  <div class="cp-row"><label>Heading color</label><input type="color" id="cpNavy" value="#1d4072" oninput="setCSSVar('--navy',this.value)"></div>
+  <div class="cp-row"><label>Background</label><input type="color" id="cpBg" value="#faf6f0" oninput="setCSSVar('--ivory',this.value)"></div>
+  <div class="cp-row" style="flex-direction:column;align-items:stretch;gap:6px;">
+    <label>Heading font</label>
+    <select onchange="setCSSVar('--font-display',this.value)">
+      <option value="'Cormorant Garamond',serif">Cormorant Garamond</option>
+      <option value="'Playfair Display',serif">Playfair Display</option>
+      <option value="'Lora',serif">Lora</option>
+    </select>
+  </div>
+  <div class="cp-row" style="flex-direction:column;align-items:stretch;gap:6px;">
+    <label>Body font</label>
+    <select onchange="setCSSVar('--font-body',this.value)">
+      <option value="'Jost',sans-serif">Jost</option>
+      <option value="'Poppins',sans-serif">Poppins</option>
+    </select>
+  </div>
+  <button class="cp-reset" onclick="resetAppearance()">Reset to default</button>
+</div>
+
+<script>
+/* ====================================================
+   CORE UTILITIES
+   ==================================================== */
+const qs = s => document.querySelector(s);
+const qsa = s => [...document.querySelectorAll(s)];
+function showToast(msg){ const t=qs('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),2200); }
+
+/* ====================================================
+   INTRO VEIL
+   ==================================================== */
+window.addEventListener('load',()=>{ setTimeout(()=>qs('#veil').classList.add('hide'),1300); });
+
+/* ====================================================
+   SCROLL REVEAL
+   ==================================================== */
+const sio = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }),{threshold:0.1});
+qsa('.reveal').forEach(el=>sio.observe(el));
+setTimeout(()=>qsa('.reveal').forEach(el=>{ if(el.getBoundingClientRect().top<window.innerHeight) el.classList.add('in'); }),100);
+
+/* ====================================================
+   SECRET EDIT MODE  (click logo 5× fast)
+   ==================================================== */
+let logoClicks=0, logoTimer;
+qs('#logoHit').addEventListener('click',()=>{
+  logoClicks++; clearTimeout(logoTimer);
+  logoTimer=setTimeout(()=>logoClicks=0, 1800);
+  if(logoClicks>=5){ logoClicks=0; enterEditMode(); }
+});
+
+function enterEditMode(){
+  const pw=prompt('Enter edit password:');
+  if(pw!=='atul1999'){ if(pw!==null) showToast('Wrong password'); return; }
+  document.body.classList.add('edit-mode');
+  qsa('[data-ed]').forEach(el=>{ el.contentEditable='true'; });
+  showToast('✎ Edit mode on — make changes, then click Save to File');
+}
+function exitEditMode(){
+  document.body.classList.remove('edit-mode');
+  qsa('[data-ed]').forEach(el=>{ el.contentEditable='false'; });
+  qs('#cpPanel').classList.remove('open');
+  showToast('Edit mode off');
+}
+
+/* ====================================================
+   PHOTO UPLOAD + DRAG TO REPOSITION
+   ==================================================== */
+function fileToDataURL(file,cb){ const r=new FileReader(); r.onload=e=>cb(e.target.result); r.readAsDataURL(file); }
+
+// Hero photo
+qs('#heroFileIn').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  fileToDataURL(f,url=>{
+    let img=qs('#heroBg');
+    img.src=url; img.style.display='block';
+    img.dataset.x='0'; img.dataset.y='0'; img.dataset.s='1'; applyTransform(img);
+    qs('#heroZone').style.display='none';
+    showToast('Photo uploaded — drag to reposition');
+  });
+  e.target.value='';
+});
+// Re-show upload zone if no image and entering edit mode (handled by CSS .edit-only)
+
+// Story photo
+qs('#storyFileIn').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  fileToDataURL(f,url=>{
+    let img=qs('#storyImg');
+    if(!img){
+      img=document.createElement('img'); img.id='storyImg'; img.alt='';
+      qs('#storyPhoto').insertBefore(img, qs('#storyPhoto').firstChild);
+      enableDrag(img);
+    }
+    img.src=url; img.dataset.x='0'; img.dataset.y='0'; img.dataset.s='1'; applyTransform(img);
+    qs('#storyPhoto .photo-upload-hint').style.display='none';
+    showToast('Photo uploaded — drag to reposition');
+  });
+  e.target.value='';
+});
+
+// Drag-to-reposition
+function enableDrag(img){
+  let dragging=false, sx=0, sy=0, bx=0, by=0;
+  img.addEventListener('mousedown',e=>{ if(!document.body.classList.contains('edit-mode')) return; e.preventDefault(); dragging=true; img.classList.add('dragging'); sx=e.clientX; sy=e.clientY; bx=parseFloat(img.dataset.x||0); by=parseFloat(img.dataset.y||0); });
+  window.addEventListener('mousemove',e=>{ if(!dragging) return; img.dataset.x=bx+(e.clientX-sx); img.dataset.y=by+(e.clientY-sy); applyTransform(img); });
+  window.addEventListener('mouseup',()=>{ if(dragging){ dragging=false; img.classList.remove('dragging'); }});
+  img.addEventListener('wheel',e=>{ if(!document.body.classList.contains('edit-mode')) return; e.preventDefault(); let s=parseFloat(img.dataset.s||1); s=Math.min(3,Math.max(0.5,s+(e.deltaY<0?0.08:-0.08))); img.dataset.s=s; applyTransform(img); },{passive:false});
+}
+function applyTransform(img){ const x=parseFloat(img.dataset.x||0),y=parseFloat(img.dataset.y||0),s=parseFloat(img.dataset.s||1); img.style.transform=`translate(${x}px,${y}px) scale(${s})`; }
+function adjImg(id,action){
+  const img=qs('#'+id); if(!img) return;
+  let x=parseFloat(img.dataset.x||0), y=parseFloat(img.dataset.y||0), s=parseFloat(img.dataset.s||1);
+  const step=20;
+  if(action==='zoomin') s=Math.min(3,s+0.15);
+  if(action==='zoomout') s=Math.max(0.5,s-0.15);
+  if(action==='left') x-=step; if(action==='right') x+=step;
+  if(action==='up') y-=step; if(action==='down') y+=step;
+  if(action==='reset'){ x=0; y=0; s=1; }
+  img.dataset.x=x; img.dataset.y=y; img.dataset.s=s; applyTransform(img);
+}
+// init drag on hero
+enableDrag(qs('#heroBg'));
+
+/* ====================================================
+   GALLERY
+   ==================================================== */
+const galleryGrid=qs('#galleryGrid');
+function makeGalleryTile(src,x,y,s){
+  const div=document.createElement('div'); div.className='g-tile';
+  const img=document.createElement('img'); img.src=src; img.alt='';
+  img.dataset.x=x||0; img.dataset.y=y||0; img.dataset.s=s||1;
+  applyTransform(img); enableDrag(img);
+  const del=document.createElement('button'); del.className='gdel'; del.innerHTML='✕'; del.title='Remove photo';
+  del.addEventListener('click',e=>{ e.stopPropagation(); div.remove(); });
+  const hint=document.createElement('div'); hint.className='empty-hint'; hint.innerHTML='<span style="font-size:22px;margin-bottom:4px;">＋</span>Replace photo';
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  div.appendChild(img); div.appendChild(del); div.appendChild(hint); div.appendChild(inp);
+  div.addEventListener('click',()=>{ if(document.body.classList.contains('edit-mode')) inp.click(); });
+  inp.addEventListener('change',e=>{ const f=e.target.files[0]; if(!f) return; fileToDataURL(f,url=>{ img.src=url; img.dataset.x=0; img.dataset.y=0; img.dataset.s=1; applyTransform(img); showToast('Photo updated'); }); e.target.value=''; });
+  return div;
+}
+function addGallerySlot(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  document.body.appendChild(inp);
+  inp.click();
+  inp.addEventListener('change',e=>{ const f=e.target.files[0]; if(!f){ inp.remove(); return; }
+    fileToDataURL(f,url=>{ galleryGrid.appendChild(makeGalleryTile(url,0,0,1)); showToast('Photo added'); }); inp.remove(); e.target.value=''; });
+}
+
+/* ====================================================
+   BIODATA / FAMILY ROW CONTROLS
+   ==================================================== */
+function addRow(tableId){
+  const table=qs('#'+tableId);
+  const row=document.createElement('div'); row.className='info-row';
+  row.innerHTML=`<div class="k" data-ed contenteditable="true" data-placeholder="Field name">New Field</div><div class="v" data-ed contenteditable="true" data-placeholder="Value">Value</div><div class="row-ctrls"><button onclick="moveRow(this,-1)">▲</button><button onclick="moveRow(this,1)">▼</button><button class="rdel" onclick="this.closest('.info-row').remove()">✕</button></div>`;
+  table.appendChild(row);
+}
+function moveRow(btn,dir){
+  const row=btn.closest('.info-row');
+  if(dir===-1 && row.previousElementSibling) row.parentElement.insertBefore(row,row.previousElementSibling);
+  if(dir===1 && row.nextElementSibling) row.parentElement.insertBefore(row.nextElementSibling,row);
+}
+
+/* ====================================================
+   TIMELINE ENTRIES
+   ==================================================== */
+function addTLEntry(listId){
+  const list=qs('#'+listId);
+  const div=document.createElement('div'); div.className='tl-entry';
+  div.innerHTML=`<div class="period" data-ed contenteditable="true" data-placeholder="Year / Period">Year</div><div><div class="title" data-ed contenteditable="true" data-placeholder="Title">Title</div><div class="org" data-ed contenteditable="true" data-placeholder="Organisation">Organisation</div><div class="desc" data-ed contenteditable="true" data-placeholder="Description"></div></div><button class="tl-del" onclick="this.closest('.tl-entry').remove()">✕ Remove</button>`;
+  list.appendChild(div);
+}
+
+/* ====================================================
+   CHIPS
+   ==================================================== */
+function addChip(){
+  const name=prompt('Add interest / hobby:'); if(!name||!name.trim()) return;
+  const c=document.createElement('span'); c.className='chip';
+  c.innerHTML=`${name.trim()}<span class="cdel" onclick="this.parentElement.remove()">✕</span>`;
+  qs('#chipRow').insertBefore(c, qs('.add-chip-btn'));
+}
+
+/* ====================================================
+   SOCIAL LINKS
+   ==================================================== */
+function editLink(id,label){
+  const a=qs('#'+id);
+  let url=prompt('Paste '+label+' (full URL starting with https://):',a.href||'');
+  if(url===null) return;
+  url=url.trim();
+  if(!url){ a.href='#'; a.textContent='(not set)'; return; }
+  if(!/^https?:\/\//i.test(url)) url='https://'+url;
+  a.href=url;
+  a.textContent=url.replace(/^https?:\/\//,'').replace(/\/$/,'');
+  showToast('Link updated');
+}
+
+/* ====================================================
+   CUSTOMIZE / APPEARANCE
+   ==================================================== */
+let currentFS=1;
+function setCSSVar(v,val){ document.documentElement.style.setProperty(v,val); }
+function changeFS(d){ currentFS=Math.min(1.35,Math.max(0.8,+(currentFS+d).toFixed(2))); document.documentElement.style.zoom=currentFS; }
+function resetAppearance(){
+  document.documentElement.style.setProperty('--text','#030303');
+  document.documentElement.style.setProperty('--navy','#1d4072');
+  document.documentElement.style.setProperty('--ivory','#faf6f0');
+  document.documentElement.style.setProperty('--font-display',"'Cormorant Garamond',serif");
+  document.documentElement.style.setProperty('--font-body',"'Jost',sans-serif");
+  document.documentElement.style.zoom=1; currentFS=1;
+  qs('#cpText').value='#030303'; qs('#cpNavy').value='#1d4072'; qs('#cpBg').value='#faf6f0';
+  showToast('Appearance reset');
+}
+function openCustomize(){ qs('#cpPanel').classList.toggle('open'); }
+qs('#cpToggle').addEventListener('click',()=>qs('#cpPanel').classList.toggle('open'));
+document.addEventListener('click',e=>{
+  if(!qs('#cpPanel').contains(e.target)&&e.target!==qs('#cpToggle')) qs('#cpPanel').classList.remove('open');
+});
+
+/* ====================================================
+   SAVE TO FILE  — bakes everything into a clean HTML
+   ==================================================== */
+function saveToFile(){
+  showToast('Preparing file…');
+  setTimeout(()=>{
+    try{
+      const clone=document.documentElement.cloneNode(true);
+
+      // 1. Remove all edit-only UI
+      clone.querySelectorAll('.edit-bar,.edit-only,.cp-toggle,.cp-panel,.toast,.add-row-btn,.add-entry-btn,.add-chip-btn,.add-photo-btn,.row-ctrls,.tl-del,.cdel,.gdel,.s-edit-btn,.photo-upload-hint,.scroll-hint,.hero-upload-zone,.hero-adjust-bar,.photo-adjust-bar').forEach(el=>el.remove());
+      clone.querySelectorAll('input[type=file]').forEach(el=>el.remove());
+
+      // 2. Remove empty gallery tiles (no image)
+      clone.querySelectorAll('.g-tile').forEach(t=>{ if(!t.querySelector('img')||!t.querySelector('img').src||t.querySelector('img').src===window.location.href) t.remove(); });
+
+      // 3. Strip contenteditable + edit-mode class
+      clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+      clone.classList.remove('edit-mode');
+      if(clone.querySelector('body')) clone.querySelector('body').classList.remove('edit-mode');
+
+      // 4. Bake current CSS variable values
+      const cs=getComputedStyle(document.documentElement);
+      const vars=['--text','--navy','--ivory','--font-display','--font-body','--line','--paper','--navy-soft','--sage-deep','--rosegold','--text-soft'];
+      let baked='\n:root{';
+      vars.forEach(v=>{ const val=cs.getPropertyValue(v).trim(); if(val) baked+=`${v}:${val};`; });
+      baked+=`} html{zoom:${currentFS};}`;
+      const st=clone.querySelector('style'); if(st) st.textContent+=baked;
+
+      // 5. Replace script with minimal static script (no editing code)
+      clone.querySelectorAll('script').forEach(s=>s.remove());
+      const ss=document.createElement('script');
+      ss.textContent=`
+window.addEventListener('load',()=>{const v=document.getElementById('veil');if(v)setTimeout(()=>v.classList.add('hide'),1300);});
+const _io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>{_io.observe(el);if(el.getBoundingClientRect().top<window.innerHeight)el.classList.add('in');});
+      `;
+      clone.querySelector('body').appendChild(ss);
+
+      // 6. Download
+      const html='<!DOCTYPE html>\n'+clone.outerHTML;
+      const blob=new Blob([html],{type:'text/html'});
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob); a.download='atul_profile_v'+Date.now()+'.html';
+      document.body.appendChild(a); a.click(); a.remove();
+      showToast('✓ File downloaded — replace index.html on GitHub with this file');
+    }catch(err){
+      console.error(err);
+      showToast('Download blocked in preview — open file directly in Chrome');
+    }
+  },80);
+}
+</script>
+</body>
+</html>
